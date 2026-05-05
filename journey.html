@@ -23,8 +23,15 @@ html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-image:radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
   background-size:28px 28px;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 25%,rgba(45,212,191,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 75%,rgba(45,212,191,0.04) 0%,transparent 55%);
+}
 }
 body>*{position:relative;z-index:1;}
 ::-webkit-scrollbar{width:3px;}
