@@ -19,11 +19,6 @@ html{scroll-behavior:smooth;}
   --ff-b:'DM Sans',system-ui,sans-serif;
 }
 body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:var(--teal-dark);}
-
-}
-body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
@@ -39,6 +34,7 @@ body::after{
 body>*{position:relative;z-index:1;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-thumb{background:var(--teal-dark);}
+  
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
