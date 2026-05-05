@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>海外旅程 · Theo Huang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson@3/dist/topojson.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;
+  --teal:#2dd4bf;--teal-dark:#14b8a4;--teal-pale:rgba(45,212,191,0.07);
+  --white:#f5f5f5;--gray:#888;
+  --border:rgba(255,255,255,0.07);--border-t:rgba(45,212,191,0.22);
+  --ff-d:'Cormorant Garamond',Georgia,serif;
+  --ff-h:'Syne',system-ui,sans-serif;
+  --ff-b:'DM Sans',system-ui,sans-serif;
+}
+body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 25%,rgba(45,212,191,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 75%,rgba(45,212,191,0.04) 0%,transparent 55%),
+    radial-gradient(ellipse 100% 40% at 50% 50%,rgba(45,212,191,0.02) 0%,transparent 70%);
+}
+body>*{position:relative;z-index:1;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--teal-dark);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 52px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);}
+.n-logo{font-family:var(--ff-h);font-size:13px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--white);text-decoration:none;}
+.n-logo em{color:var(--teal);font-style:normal;}
+.n-links{display:flex;list-style:none;}
+.n-links a{display:block;padding:0 18px;height:64px;line-height:64px;text-decoration:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:var(--ff-h);transition:color 0.2s;border-right:0.5px solid rgba(255,255,255,0.08);}
+.n-links li:first-child a{border-left:0.5px solid rgba(255,255,255,0.08);}
+.n-links a:hover,.n-links a.active{color:var(--teal);}
+.n-right{display:flex;gap:0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;}
+.l-btn{padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-right:0.5px solid rgba(255,255,255,0.1);background:transparent;cursor:pointer;color:rgba(255,255,255,0.4);font-family:var(--ff-h);transition:all 0.2s;white-space:nowrap;}
+.l-btn:last-child{border-right:none;}
+.l-btn.on{background:var(--teal);color:var(--bg);}
+.l-btn:hover:not(.on){background:rgba(45,212,191,0.1);color:var(--teal);}
+
+/* PAGE HERO */
+.page-hero{padding:140px 52px 80px;border-bottom:0.5px solid var(--border);}
+.ph-inner{max-width:1100px;margin:0 auto;}
+.kicker{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.kicker::before{content:'';width:28px;height:1px;background:var(--teal);}
+.page-title{font-family:var(--ff-d);font-size:clamp(44px,6vw,80px);font-weight:600;line-height:1.15;letter-spacing:-2px;color:var(--white);margin-bottom:32px;}
+.page-title .dim{color:rgba(255,255,255,0.2);font-weight:300;}
+.page-desc{font-size:16px;color:var(--gray);line-height:1.85;max-width:560px;}
+
+/* SECTIONS */
+section{padding:96px 52px;}
+.inner{max-width:1100px;margin:0 auto;}
+.stitle{font-family:var(--ff-d);font-size:clamp(32px,3.5vw,48px);font-weight:600;line-height:1.05;letter-spacing:-1px;margin-bottom:48px;}
+.stitle .dim{color:rgba(255,255,255,0.2);font-weight:300;}
+.fade{opacity:0;transform:translateY(18px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.fade.vis{opacity:1;transform:none;}
+
+/* MAP */
+.map-sec{background:var(--bg2);border-top:0.5px solid var(--border);}
+.map-counter{display:flex;gap:40px;margin-bottom:32px;flex-wrap:wrap;}
+.mc{border-left:2px solid var(--teal);padding-left:16px;}
+.mc-v{font-family:var(--ff-d);font-size:32px;font-weight:600;line-height:1;color:var(--white);}
+.mc-v em{color:var(--teal);font-style:normal;}
+.mc-l{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-top:4px;}
+.filter-row{display:flex;gap:0;margin-bottom:28px;border:0.5px solid var(--border);width:fit-content;}
+.fb{padding:8px 20px;font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:transparent;border:none;color:var(--gray);cursor:pointer;transition:all 0.2s;border-right:0.5px solid var(--border);}
+.fb:last-child{border-right:none;}
+.fb.on,.fb:hover{background:var(--teal);color:var(--bg);}
+.map-wrap{width:100%;background:var(--bg3);border:0.5px solid var(--border);position:relative;overflow:hidden;}
+#map-svg{width:100%;height:480px;display:block;}
+.country{fill:#1a1a1a;stroke:#2a2a2a;stroke-width:0.5;}
+.map-tooltip{position:absolute;pointer-events:none;background:rgba(10,10,10,0.95);border:0.5px solid var(--border-t);color:var(--white);padding:14px 18px;min-width:200px;opacity:0;transition:opacity 0.2s;z-index:10;}
+.tt-flag{font-size:20px;margin-bottom:8px;}
+.tt-city{font-family:var(--ff-d);font-size:18px;font-weight:600;margin-bottom:2px;}
+.tt-country{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.tt-desc{font-size:12px;color:var(--gray);line-height:1.6;}
+.tt-badge{display:inline-block;margin-top:8px;padding:3px 10px;font-family:var(--ff-h);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;}
+.tt-badge.work{background:var(--teal);color:var(--bg);}
+.tt-badge.travel{background:rgba(45,212,191,0.15);color:var(--teal);}
+.map-legend{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;}
+.ml{display:flex;align-items:center;gap:8px;font-family:var(--ff-h);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);}
+.ml-dot{width:10px;height:10px;border-radius:50%;}
+
+/* TIMELINE */
+.timeline-sec{background:var(--bg);}
+.tl{display:flex;flex-direction:column;gap:0;}
+.tl-item{border:0.5px solid var(--border);margin-bottom:4px;cursor:pointer;transition:border-color 0.2s;}
+.tl-item:hover{border-color:var(--border-t);}
+.tl-item.open{border-color:var(--teal);}
+.tl-header{padding:28px 32px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;}
+.tl-flag{font-size:24px;}
+.tl-year{font-family:var(--ff-h);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.tl-role{font-family:var(--ff-d);font-size:22px;font-weight:600;color:var(--white);line-height:1.2;margin-bottom:3px;}
+.tl-org{font-size:12px;color:var(--gray);}
+.tl-toggle{font-size:20px;color:var(--gray);transition:transform 0.3s,color 0.2s;font-family:var(--ff-h);}
+.tl-item.open .tl-toggle{transform:rotate(90deg);color:var(--teal);}
+.tl-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.tl-item.open .tl-body{max-height:600px;}
+.tl-body-inner{padding:0 32px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;}
+.tl-photo{width:100%;height:200px;object-fit:cover;display:block;background:var(--bg3);}
+.tl-photo-ph{width:100%;height:200px;background:var(--bg3);border:0.5px dashed rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;}
+.tl-photo-ph span{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.tl-hook{font-family:var(--ff-d);font-size:17px;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:12px;padding-left:14px;border-left:2px solid var(--teal);}
+.tl-desc{font-size:13px;color:var(--gray);line-height:1.85;}
+.tl-kpis{display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.tl-kpi{padding:16px 20px;border:0.5px solid var(--border);background:rgba(255,255,255,0.02);}
+.tl-kpi-v{font-family:var(--ff-d);font-size:28px;font-weight:600;color:var(--white);line-height:1;}
+.tl-kpi-v em{color:var(--teal);font-style:normal;}
+.tl-kpi-l{font-family:var(--ff-h);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-top:4px;}
+
+/* VIDEO */
+.video-sec{background:var(--bg2);border-top:0.5px solid var(--border);}
+.vid-featured{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--border);background:var(--bg3);margin-bottom:20px;}
+.vid-thumb{position:relative;overflow:hidden;}
+.vid-thumb iframe{width:100%;height:300px;border:none;display:block;}
+.vid-info{padding:36px;display:flex;flex-direction:column;justify-content:center;}
+.vid-label{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+.vid-title{font-family:var(--ff-d);font-size:24px;font-weight:600;color:var(--white);line-height:1.3;margin-bottom:12px;}
+.vid-desc{font-size:13px;color:var(--gray);line-height:1.8;margin-bottom:20px;}
+.vid-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-h);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);text-decoration:none;border-bottom:1px solid var(--border-t);padding-bottom:2px;transition:border-color 0.2s;width:fit-content;}
+.vid-link:hover{border-color:var(--teal);}
+.vid-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:0.5px solid var(--border);}
+.vid-card{border-right:0.5px solid var(--border);overflow:hidden;cursor:pointer;transition:background 0.2s;}
+.vid-card:last-child{border-right:none;}
+.vid-card:hover{background:var(--teal-pale);}
+.vid-card iframe{width:100%;height:160px;border:none;display:block;}
+.vid-card-body{padding:14px 16px 18px;}
+.vid-card-label{font-family:var(--ff-h);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.vid-card-title{font-family:var(--ff-d);font-size:16px;font-weight:600;color:var(--white);line-height:1.3;}
+.vid-card-year{font-size:11px;color:var(--gray);font-family:var(--ff-h);margin-top:4px;}
+
+/* MEDIA */
+.media-sec{background:var(--bg);border-top:0.5px solid var(--border);}
+.media-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.media-card{padding:28px;border:0.5px solid var(--border);text-decoration:none;color:var(--white);display:block;transition:border-color 0.2s,background 0.2s;position:relative;}
+.media-card:hover{border-color:var(--teal);background:var(--teal-pale);}
+.media-source-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.media-source{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:10px;}
+.media-source::before{content:'';width:16px;height:1px;background:var(--teal);}
+.media-date{font-size:11px;color:var(--gray);font-family:var(--ff-h);}
+.media-title{font-family:var(--ff-d);font-size:20px;font-weight:600;line-height:1.35;margin-bottom:10px;}
+.media-desc{font-size:13px;color:var(--gray);line-height:1.75;}
+.media-arr{position:absolute;top:24px;right:24px;font-size:16px;color:var(--gray);transition:color 0.2s;}
+.media-card:hover .media-arr{color:var(--teal);}
+.media-sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:0.5px solid var(--border);}
+.media-sm{padding:20px;border-right:0.5px solid var(--border);text-decoration:none;color:var(--white);display:block;transition:background 0.2s;}
+.media-sm:last-child{border-right:none;}
+.media-sm:hover{background:var(--teal-pale);}
+.ms-source{font-family:var(--ff-h);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.ms-source::before{content:'';width:12px;height:1px;background:var(--teal);}
+.ms-title{font-family:var(--ff-d);font-size:15px;font-weight:600;line-height:1.35;margin-bottom:6px;}
+.ms-desc{font-size:12px;color:var(--gray);line-height:1.65;}
+.ms-date{font-size:10px;color:var(--gray);font-family:var(--ff-h);margin-top:12px;}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:22px 52px;display:flex;justify-content:space-between;align-items:center;}
+.f-logo{font-family:var(--ff-h);font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+.f-logo em{color:var(--teal);font-style:normal;}
+.f-copy{font-size:11px;color:rgba(255,255,255,0.18);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .n-links{display:none;}
+  section,.page-hero{padding:72px 20px;}
+  .tl-body-inner{grid-template-columns:1fr;gap:20px;}
+  .tl-photo-ph{display:none;}
+  .vid-featured{grid-template-columns:1fr;}
+  .vid-thumb iframe{height:220px;}
+  .vid-grid{grid-template-columns:1fr 1fr;}
+  .media-grid{grid-template-columns:1fr;}
+  .media-sm-grid{grid-template-columns:1fr 1fr;}
+  .map-counter{gap:24px;}
+  #map-svg{height:280px;}
+  footer{flex-direction:column;gap:8px;text-align:center;}
+}
+@media(max-width:560px){
+  .vid-grid{grid-template-columns:1fr;}
+  .media-sm-grid{grid-template-columns:1fr;}
+  .tl-header{grid-template-columns:auto 1fr;}
+  .tl-toggle{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="n-logo">T<em>H</em></a>
+  <ul class="n-links">
+    <li><a href="index.html#about" class="t" data-zh="關於我" data-en="About" data-vi="Về tôi">關於我</a></li>
+    <li><a href="journey.html" class="active t" data-zh="海外旅程" data-en="Journey" data-vi="Hành trình">海外旅程</a></li>
+    <li><a href="index.html#projects" class="t" data-zh="專案" data-en="Projects" data-vi="Dự án">專案</a></li>
+    <li><a href="index.html#contact" class="t" data-zh="聯絡我" data-en="Contact" data-vi="Liên hệ">聯絡我</a></li>
+  </ul>
+  <div class="n-right">
+    <button class="l-btn on" onclick="setLang('zh',this)">中文</button>
+    <button class="l-btn" onclick="setLang('en',this)">English</button>
+    <button class="l-btn" onclick="setLang('vi',this)">Tiếng Việt</button>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="ph-inner">
+    <div class="kicker t" data-zh="海外旅程 · Journey" data-en="Journey · Fieldwork" data-vi="Hành trình · Thực địa">海外旅程 · Journey</div>
+    <h1 class="page-title">
+      <span class="t" data-zh="從宜蘭出發，" data-en="From Yilan," data-vi="Từ Nghi Lan,">從宜蘭出發，</span><br>
+      <span class="dim t" data-zh="一路向遠。" data-en="to the world." data-vi="ra thế giới.">一路向遠。</span>
+    </h1>
+    <p class="page-desc t" data-zh="10,000+ 公里的田野足跡，走過 15 個國家、50+ 座城市。每一站都是一堂課，每一個陌生人都藏著一個值得被說出來的故事。" data-en="10,000+ km of fieldwork across 15+ countries and 50+ cities. Every stop is a lesson, and every stranger holds a story worth telling." data-vi="Hơn 10,000 km thực địa qua 15+ quốc gia và 50+ thành phố. Mỗi điểm dừng là một bài học.">10,000+ 公里的田野足跡，走過 15 個國家、50+ 座城市。每一站都是一堂課，每一個陌生人都藏著一個值得被說出來的故事。</p>
+  </div>
+</div>
+
+<!-- MAP -->
+<section class="map-sec" id="map">
+  <div class="inner">
+    <div class="kicker fade t" data-zh="世界足跡" data-en="World Footprints" data-vi="Dấu chân thế giới">世界足跡</div>
+    <h2 class="stitle fade">每一個點，<span class="dim">都是一堂課。</span></h2>
+    <div class="map-counter fade">
+      <div class="mc"><div class="mc-v">15<em>+</em></div><div class="mc-l t" data-zh="個國家" data-en="Countries" data-vi="Quốc gia">個國家</div></div>
+      <div class="mc"><div class="mc-v">50<em>+</em></div><div class="mc-l t" data-zh="座城市" data-en="Cities" data-vi="Thành phố">座城市</div></div>
+      <div class="mc"><div class="mc-v">10,000<em>+</em></div><div class="mc-l t" data-zh="公里田野" data-en="km Fieldwork" data-vi="km Thực địa">公里田野</div></div>
+      <div class="mc"><div class="mc-v">4</div><div class="mc-l t" data-zh="大洲" data-en="Continents" data-vi="Châu lục">大洲</div></div>
+    </div>
+    <div class="filter-row fade">
+      <button class="fb on" onclick="fd('all',this)">全部</button>
+      <button class="fb" onclick="fd('work',this)">工作</button>
+      <button class="fb" onclick="fd('travel',this)">旅遊</button>
+    </div>
+    <div class="map-wrap fade">
+      <svg id="map-svg"></svg>
+      <div class="map-tooltip" id="mtt"></div>
+    </div>
+    <div class="map-legend fade">
+      <div class="ml"><div class="ml-dot" style="background:#f5f5f5;"></div><span class="t" data-zh="台灣 · 家" data-en="Taiwan · Home" data-vi="Đài Loan · Nhà">台灣 · 家</span></div>
+      <div class="ml"><div class="ml-dot" style="background:#2dd4bf;"></div><span class="t" data-zh="工作 · 實習" data-en="Work · Internship" data-vi="Làm việc · Thực tập">工作 · 實習</span></div>
+      <div class="ml"><div class="ml-dot" style="background:#888;"></div><span class="t" data-zh="旅遊" data-en="Travel" data-vi="Du lịch">旅遊</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-sec" id="timeline">
+  <div class="inner">
+    <div class="kicker fade t" data-zh="海外歷程" data-en="Experience" data-vi="Kinh nghiệm">海外歷程</div>
+    <h2 class="stitle fade">四段旅程，<span class="dim">四間教室。</span></h2>
+    <div class="tl fade">
+
+      <!-- 台灣 -->
+      <div class="tl-item open" onclick="toggleTl(this)">
+        <div class="tl-header">
+          <div class="tl-flag">🇹🇼</div>
+          <div>
+            <div class="tl-year">Jan – Jul 2024</div>
+            <div class="tl-role t" data-zh="專案經理" data-en="Project Manager" data-vi="Quản lý dự án">專案經理</div>
+            <div class="tl-org t" data-zh="多元文化種子講師計畫 × 張榮發基金會 · 台灣" data-en="Multicultural Seed Teacher Program × Chang Yung-Fa Foundation · Taiwan" data-vi="Chương trình Giáo viên Đa văn hóa × Quỹ Chang Yung-Fa · Đài Loan">多元文化種子講師計畫 × 張榮發基金會 · 台灣</div>
+          </div>
+          <div class="tl-toggle">›</div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-body-inner">
+            <div>
+              <img class="tl-photo" src="images/proj-seed.jpg" alt="種子講師" onerror="this.style.display='none'">
+              <div class="tl-photo-ph" style="display:none"><span>images/proj-seed.jpg</span></div>
+            </div>
+            <div>
+              <p class="tl-hook t" data-zh="「新二代的孩子不需要被同情，他們需要一個舞台。我們把東南亞文化帶進了三十九所學校的教室。」" data-en='"New immigrant children don\'t need sympathy — they need a stage. We brought Southeast Asian culture into 39 school classrooms."' data-vi='"Những đứa trẻ di dân thế hệ thứ hai không cần được thương hại — họ cần một sân khấu."'>「新二代的孩子不需要被同情，他們需要一個舞台。我們把東南亞文化帶進了三十九所學校的教室。」</p>
+              <p class="tl-desc t" data-zh="統籌 NTD 120 萬全國性計畫，協調包含新北市教育局、張榮發基金會等 39 所合作學校、7,000+ 利害關係人。推廣全台首套東南亞語文教案至 115 個班級，達成 150% KPI。" data-en="Coordinated a NT$1.2M national program with 39 partner schools and 7,000+ stakeholders including the New Taipei City Education Bureau and Chang Yung-Fa Foundation. Promoted Taiwan's first Southeast Asian language kits to 115 classes, achieving 150% KPI." data-vi="Điều phối chương trình 1,2 triệu NTD với 39 trường đối tác và 7.000+ bên liên quan. Đạt 150% KPI.">統籌 NTD 120 萬全國性計畫，協調包含新北市教育局、張榮發基金會等 39 所合作學校、7,000+ 利害關係人。推廣全台首套東南亞語文教案至 115 個班級，達成 150% KPI。</p>
+            </div>
+            <div class="tl-kpis">
+              <div class="tl-kpi"><div class="tl-kpi-v">NT$1.2<em>M</em></div><div class="tl-kpi-l">Budget</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">39</div><div class="tl-kpi-l">Schools</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">150<em>%</em></div><div class="tl-kpi-l">KPI</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 柬埔寨 -->
+      <div class="tl-item" onclick="toggleTl(this)">
+        <div class="tl-header">
+          <div class="tl-flag">🇰🇭</div>
+          <div>
+            <div class="tl-year">Jun – Aug 2024</div>
+            <div class="tl-role t" data-zh="創業社群實習生" data-en="Entrepreneur Community Intern" data-vi="Thực tập sinh cộng đồng">創業社群實習生</div>
+            <div class="tl-org">Impact Hub Phnom Penh · 柬埔寨</div>
+          </div>
+          <div class="tl-toggle">›</div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-body-inner">
+            <div>
+              <img class="tl-photo" src="images/proj-cambodia.jpg" alt="柬埔寨" onerror="this.style.display='none'">
+              <div class="tl-photo-ph" style="display:none"><span>images/proj-cambodia.jpg</span></div>
+            </div>
+            <div>
+              <p class="tl-hook t" data-zh="「沒有地圖、沒有導遊，只有一台二手摩托車和一個問題：柬埔寨的年輕人，究竟在創業什麼？」" data-en='"No map, no guide — just a secondhand motorbike and one question: what are young Cambodians building?"' data-vi='"Không bản đồ, không hướng dẫn — chỉ có một chiếc xe máy cũ và một câu hỏi: thanh niên Campuchia đang xây dựng gì?"'>「沒有地圖、沒有導遊，只有一台二手摩托車和一個問題：柬埔寨的年輕人，究竟在創業什麼？」</p>
+              <p class="tl-desc t" data-zh="跨越 3,000 公里（含 500 公里機車深入鄉鎮）執行田野調查。於 8 國籍國際團隊中擔任中英柬三語橋接，協助 UNDP 創業工作坊達成 150% 觸及。走訪金邊、暹粒、馬德望、茶膠、貢布、施亞努市 6 座城市。" data-en="Covered 3,000+ km (including 500km by motorcycle into rural areas) for fieldwork. Served as trilingual bridge in an 8-nationality team, helping UNDP entrepreneurship workshops reach 150% target. Visited 6 cities across Cambodia." data-vi="Di chuyển hơn 3.000 km (bao gồm 500 km bằng xe máy) để khảo sát thực địa. Làm cầu nối ba ngôn ngữ trong nhóm 8 quốc tịch.">跨越 3,000 公里（含 500 公里機車深入鄉鎮）執行田野調查。於 8 國籍國際團隊中擔任中英柬三語橋接，協助 UNDP 創業工作坊達成 150% 觸及。走訪金邊、暹粒、馬德望、茶膠、貢布、施亞努市 6 座城市。</p>
+            </div>
+            <div class="tl-kpis">
+              <div class="tl-kpi"><div class="tl-kpi-v">3,000<em>+</em></div><div class="tl-kpi-l">km Fieldwork</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">6</div><div class="tl-kpi-l">Cities</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">150<em>%</em></div><div class="tl-kpi-l">UNDP Target</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 印度 -->
+      <div class="tl-item" onclick="toggleTl(this)">
+        <div class="tl-header">
+          <div class="tl-flag">🇮🇳</div>
+          <div>
+            <div class="tl-year">Jun – Aug 2025</div>
+            <div class="tl-role t" data-zh="國際發展實習生" data-en="International Development Intern" data-vi="Thực tập sinh phát triển quốc tế">國際發展實習生</div>
+            <div class="tl-org">Impact Hub Hyderabad · 印度</div>
+          </div>
+          <div class="tl-toggle">›</div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-body-inner">
+            <div>
+              <img class="tl-photo" src="images/proj-india.jpg" alt="印度" onerror="this.style.display='none'">
+              <div class="tl-photo-ph" style="display:none"><span>images/proj-india.jpg</span></div>
+            </div>
+            <div>
+              <p class="tl-hook t" data-zh="「一個念劇場的台灣學生，憑什麼告訴印度企業該怎麼打入市場？我用十四座城市的田野調查，寫出了那份報告。」" data-en='"What gives a theatre student the right to advise Indian companies on market entry? Fourteen cities worth of fieldwork."' data-vi='"Điều gì cho phép một sinh viên sân khấu tư vấn cho doanh nghiệp Ấn Độ? Câu trả lời từ mười bốn thành phố."'>「一個念劇場的台灣學生，憑什麼告訴印度企業該怎麼打入市場？我用十四座城市的田野調查，寫出了那份報告。」</p>
+              <p class="tl-desc t" data-zh="親赴 14 座印度核心城市執行實地調研，走訪逾 7,000 公里。協作完成 80 頁台印雙語 GTM 市場報告，建立「產業樹狀結構」模型，為有意進軍印度市場的台灣企業規劃落地執行藍圖。" data-en="Visited 14 Indian cities and traveled over 7,000 km for field research. Co-authored an 80-page bilingual Taiwan-India GTM report and built an 'Industry Tree' model to provide market-entry roadmaps for Taiwanese enterprises." data-vi="Đến 14 thành phố Ấn Độ và di chuyển hơn 7.000 km. Đồng tác giả báo cáo GTM song ngữ 80 trang Đài Loan-Ấn Độ.">親赴 14 座印度核心城市執行實地調研，走訪逾 7,000 公里。協作完成 80 頁台印雙語 GTM 市場報告，建立「產業樹狀結構」模型，為有意進軍印度市場的台灣企業規劃落地執行藍圖。</p>
+            </div>
+            <div class="tl-kpis">
+              <div class="tl-kpi"><div class="tl-kpi-v">14</div><div class="tl-kpi-l">Cities</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">7,000<em>+</em></div><div class="tl-kpi-l">km</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">80<em>p</em></div><div class="tl-kpi-l">GTM Report</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 波士頓 -->
+      <div class="tl-item" onclick="toggleTl(this)">
+        <div class="tl-header">
+          <div class="tl-flag">🇺🇸</div>
+          <div>
+            <div class="tl-year">Sep – Dec 2025</div>
+            <div class="tl-role t" data-zh="數據與教育實習生" data-en="Data & Education Intern" data-vi="Thực tập sinh dữ liệu & giáo dục">數據與教育實習生</div>
+            <div class="tl-org t" data-zh="The Huntington Theatre · 波士頓" data-en="The Huntington Theatre · Boston" data-vi="The Huntington Theatre · Boston">The Huntington Theatre · 波士頓</div>
+          </div>
+          <div class="tl-toggle">›</div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-body-inner">
+            <div>
+              <img class="tl-photo" src="images/proj-huntington.jpg" alt="波士頓" onerror="this.style.display='none'">
+              <div class="tl-photo-ph" style="display:none"><span>images/proj-huntington.jpg</span></div>
+            </div>
+            <div>
+              <p class="tl-hook t" data-zh="「一間百年劇院找來一個戲劇系學生幫他們處理數據——然後他們的報表從兩個月變成一週。」" data-en='"A century-old theatre brought in a theatre student to handle their data — and their reports went from two months to one week."' data-vi='"Một nhà hát trăm tuổi mời một sinh viên sân khấu xử lý dữ liệu — và thời gian báo cáo giảm từ hai tháng xuống một tuần."'>「一間百年劇院找來一個戲劇系學生幫他們處理數據——然後他們的報表從兩個月變成一週。」</p>
+              <p class="tl-desc t" data-zh="獲頒林堉璘宏泰教育基金會全額獎學金 $30,000 美元。開發 Excel VBA 自動化工具，針對 480,000 筆會員大數據，將報表處理時程縮短 87%。建立捐款分群模型，篩選 60+ 位高潛力捐款人。" data-en="Awarded a full scholarship of $30,000 USD from the Lin Yu-Lin Foundation. Developed Excel VBA automation tools for 480,000 member records, cutting report time by 87%. Built donor segmentation models identifying 60+ high-value donors." data-vi="Được cấp học bổng toàn phần 30.000 USD. Phát triển công cụ VBA xử lý 480.000 bản ghi, giảm thời gian báo cáo 87%.">獲頒林堉璘宏泰教育基金會全額獎學金 $30,000 美元。開發 Excel VBA 自動化工具，針對 480,000 筆會員大數據，將報表處理時程縮短 87%。建立捐款分群模型，篩選 60+ 位高潛力捐款人。</p>
+            </div>
+            <div class="tl-kpis">
+              <div class="tl-kpi"><div class="tl-kpi-v">87<em>%</em></div><div class="tl-kpi-l">Efficiency</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">480<em>K</em></div><div class="tl-kpi-l">Records</div></div>
+              <div class="tl-kpi"><div class="tl-kpi-v">$30<em>K</em></div><div class="tl-kpi-l">Scholarship</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-sec" id="video">
+  <div class="inner">
+    <div class="kicker fade t" data-zh="影片作品集" data-en="Video Works" data-vi="Tác phẩm video">影片作品集</div>
+    <h2 class="stitle fade">用鏡頭，<span class="dim">說那些說不完的故事。</span></h2>
+
+    <!-- Featured -->
+    <div class="vid-featured fade">
+      <div class="vid-thumb">
+        <iframe src="https://www.youtube.com/embed/Xi7x_qkoGdM?rel=0&modestbranding=1" title="夢迴西貢" allowfullscreen></iframe>
+      </div>
+      <div class="vid-info">
+        <div class="vid-label t" data-zh="劇場 · 社創" data-en="Theatre · Social" data-vi="Sân khấu · Xã hội">劇場 · 社創</div>
+        <div class="vid-title">《夢迴西貢 Mơ về Sài Gòn》</div>
+        <p class="vid-desc t" data-zh="七個在台灣長大的孩子，第一次用媽媽的語言，在舞台上說出自己從來沒說過的故事。台積電青年築夢計畫入選作品。" data-en="Seven children raised in Taiwan, speaking their mothers' language on stage for the very first time. Selected by TSMC Youth Dream-Building Program." data-vi="Bảy đứa trẻ lớn lên ở Đài Loan, lần đầu tiên nói ngôn ngữ của mẹ trên sân khấu. Được chọn bởi Chương trình TSMC.">七個在台灣長大的孩子，第一次用媽媽的語言，在舞台上說出自己從來沒說過的故事。台積電青年築夢計畫入選作品。</p>
+        <a href="https://youtu.be/Xi7x_qkoGdM" target="_blank" class="vid-link t" data-zh="Watch on YouTube →" data-en="Watch on YouTube →" data-vi="Xem trên YouTube →">Watch on YouTube →</a>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="vid-grid fade">
+      <div class="vid-card">
+        <iframe src="https://www.youtube.com/embed/njU1O9eamkk?rel=0&modestbranding=1" title="Foodeast" allowfullscreen></iframe>
+        <div class="vid-card-body">
+          <div class="vid-card-label">品牌 · Brand</div>
+          <div class="vid-card-title">Foodeast 官方形象片</div>
+          <div class="vid-card-year">2022</div>
+        </div>
+      </div>
+      <div class="vid-card">
+        <iframe src="https://www.youtube.com/embed/G1m8LIdGeDM?rel=0&modestbranding=1" title="奧黛" allowfullscreen></iframe>
+        <div class="vid-card-body">
+          <div class="vid-card-label">紀錄片 · Documentary</div>
+          <div class="vid-card-title">「一件奧黛，帶我回到媽媽來自的地方」</div>
+          <div class="vid-card-year">2024</div>
+        </div>
+      </div>
+      <div class="vid-card">
+        <iframe src="https://www.youtube.com/embed/xAPslMZtj5U?rel=0&modestbranding=1" title="柬埔寨" allowfullscreen></iframe>
+        <div class="vid-card-body">
+          <div class="vid-card-label">田野 · Fieldwork</div>
+          <div class="vid-card-title">柬埔寨實習成果影片</div>
+          <div class="vid-card-year">2024</div>
+        </div>
+      </div>
+      <div class="vid-card">
+        <iframe src="https://www.youtube.com/embed/zkEK2jZvwxc?rel=0&modestbranding=1" title="印度" allowfullscreen></iframe>
+        <div class="vid-card-body">
+          <div class="vid-card-label">田野 · Fieldwork</div>
+          <div class="vid-card-title">印度實習成果影片</div>
+          <div class="vid-card-year">2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIA -->
+<section class="media-sec" id="media">
+  <div class="inner">
+    <div class="kicker fade t" data-zh="媒體報導" data-en="Press & Media" data-vi="Báo chí & Truyền thông">媒體報導</div>
+    <h2 class="stitle fade">他們這樣<span class="dim">說起我。</span></h2>
+
+    <div class="media-grid fade">
+      <a href="https://vita.tw/%e7%94%9f%e6%88%91%e6%99%82%e8%aa%aa%e8%b6%8a%e5%8d%97%e8%a9%b1%e5%97%8e%ef%bc%9f-%e6%96%b0%e4%ba%8c%e4%bb%a3%e6%bc%94%e6%88%b2%e9%87%8d%e7%8f%be%e5%aa%bd%e5%aa%bd%e4%be%86%e5%8f%b0%e8%b7%af/" target="_blank" class="media-card">
+        <div class="media-arr">↗</div>
+        <div class="media-source-row"><span class="media-source">生命力新聞</span><span class="media-date">2025</span></div>
+        <div class="media-title">「生我時說越南話嗎？新二代演戲重現媽媽來台路」</div>
+        <p class="media-desc">《夢迴西貢》的幕後故事——七個孩子，第一次用媽媽的語言問出那個從來沒說出口的問題。</p>
+      </a>
+      <a href="https://paper.udn.com/udnpaper/PIC0005/405583/web/" target="_blank" class="media-card">
+        <div class="media-arr">↗</div>
+        <div class="media-source-row"><span class="media-source">聯合報</span><span class="media-date">2025</span></div>
+        <div class="media-title">聯合報專題報導</div>
+        <p class="media-desc">主流媒體視角下的《夢迴西貢》——一齣讓台灣社會重新看見新二代故事的劇場作品。</p>
+      </a>
+    </div>
+
+    <div class="media-sm-grid fade">
+      <a href="https://www.rti.org.tw/vn/program?uid=4&pid=447" target="_blank" class="media-sm">
+        <div class="ms-source">RTI 越南語廣播</div>
+        <div class="ms-title">年輕導演黃晨凱——用劇場搭起文化橋樑</div>
+        <p class="ms-desc">越南語廣播專訪，談《夢迴西貢》如何讓新二代找到自己的舞台。</p>
+        <div class="ms-date">2025</div>
+      </a>
+      <a href="https://www.oia.ntu.edu.tw" target="_blank" class="media-sm">
+        <div class="ms-source">台大國際事務處</div>
+        <div class="ms-title">柬埔寨 Impact Hub 金邊創業社群實戰</div>
+        <p class="ms-desc">台大官方專訪，記錄從金邊街頭到五所大學的摩托車田野旅程。</p>
+        <div class="ms-date">2025</div>
+      </a>
+      <a href="https://tw.news.yahoo.com/%E8%81%AF%E7%99%BC%E7%A7%91%E6%8A%80%E6%99%BA%E5%9C%A8%E5%AE%B6%E9%84%89-%E9%80%99%E8%A3%A1%E4%B9%9F%E6%98%AF%E4%BD%A0%E7%9A%84%E5%AE%B6-%E7%A7%91%E6%8A%80%E5%89%B5%E6%96%B0%E8%B7%A8%E8%B6%8A%E6%96%87%E5%8C%96%E9%B4%BB%E6%BA%9D-%E5%BB%BA%E6%A7%8B%E6%96%B0%E4%BD%8F%E6%B0%91%E5%8F%8B%E5%96%84%E7%A4%BE%E6%9C%83-020021326.html" target="_blank" class="media-sm">
+        <div class="ms-source">Yahoo 新聞</div>
+        <div class="ms-title">智在家鄉——科技創新跨越文化鴻溝</div>
+        <p class="ms-desc">VPath 專案報導，聯發科競賽全國十強。</p>
+        <div class="ms-date">2023</div>
+      </a>
+      <a href="https://www.epochtimes.com" target="_blank" class="media-sm">
+        <div class="ms-source">大紀元波士頓</div>
+        <div class="ms-title">台大學生赴波士頓公益機構實習</div>
+        <p class="ms-desc">駐波士頓台北經文處座談報導，記錄波士頓社會創新實踐歷程。</p>
+        <div class="ms-date">2025</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">T<em>H</em></div>
+  <div class="f-copy">© 2026 Chen-Kai (Theo) Huang · All rights reserved</div>
+</footer>
+
+<script>
+/* MAP */
+const cities=[
+  // HOME
+  {name:'台北 Taipei',country:'台灣 Taiwan',flag:'🇹🇼',lat:25.03,lng:121.56,type:'home',desc:'成長與出發的地方。NTU 戲劇系，赴憶文化 COO。'},
+  {name:'宜蘭 Yilan',country:'台灣 Taiwan',flag:'🇹🇼',lat:24.70,lng:121.74,type:'home',desc:'從這裡的菜市場，開始觀察世界的起點。'},
+  // WORK
+  {name:'波士頓 Boston',country:'美國 USA',flag:'🇺🇸',lat:42.36,lng:-71.06,type:'work',desc:'The Huntington Theatre 數據分析實習。林堉璘基金會全額獎學金 $30,000 USD。'},
+  {name:'海得拉巴 Hyderabad',country:'印度 India',flag:'🇮🇳',lat:17.38,lng:78.47,type:'work',desc:'Impact Hub Hyderabad 國際發展實習。完成 80 頁台印雙語 GTM 市場報告。'},
+  {name:'金邊 Phnom Penh',country:'柬埔寨 Cambodia',flag:'🇰🇭',lat:11.56,lng:104.92,type:'work',desc:'Impact Hub Phnom Penh 創業社群實習。3,000km 機車田野調查，走訪 6 座城市。'},
+  {name:'河內 Hanoi',country:'越南 Vietnam',flag:'🇻🇳',lat:21.03,lng:105.85,type:'work',desc:'王雲五獎學金計畫。越南文化交流與社會創新研究。'},
+  // TRAVEL
+  {name:'曼谷 Bangkok',country:'泰國 Thailand',flag:'🇹🇭',lat:13.75,lng:100.50,type:'travel',desc:'東南亞旅遊，城市文化觀察。'},
+  {name:'胡志明市 Ho Chi Minh',country:'越南 Vietnam',flag:'🇻🇳',lat:10.82,lng:106.63,type:'travel',desc:'從金邊騎摩托車 6 小時抵達，感受中南半島的邊界模糊感。'},
+  {name:'新加坡 Singapore',country:'新加坡 Singapore',flag:'🇸🇬',lat:1.35,lng:103.82,type:'travel',desc:'東南亞城市觀察，多元文化共融典範。'},
+  {name:'美里 Miri',country:'馬來西亞 Malaysia',flag:'🇲🇾',lat:4.40,lng:113.99,type:'travel',desc:'婆羅洲馬來西亞城市，深入東馬文化。'},
+  {name:'吉隆坡 Kuala Lumpur',country:'馬來西亞 Malaysia',flag:'🇲🇾',lat:3.14,lng:101.69,type:'travel',desc:'馬來西亞首都，多元民族文化觀察。'},
+  {name:'峇里島 Bali',country:'印尼 Indonesia',flag:'🇮🇩',lat:-8.34,lng:115.09,type:'travel',desc:'印尼文化聖地，深度文化體驗。'},
+  {name:'爪哇島 Java',country:'印尼 Indonesia',flag:'🇮🇩',lat:-7.61,lng:110.20,type:'travel',desc:'印尼最大島，歷史文化深度探索。'},
+  {name:'Tirupati',country:'印度 India',flag:'🇮🇳',lat:13.63,lng:79.42,type:'travel',desc:'印度著名宗教聖地，GTM 田野調查城市之一。'},
+  {name:'Vijayawada',country:'印度 India',flag:'🇮🇳',lat:16.51,lng:80.64,type:'travel',desc:'安得拉邦重要城市，市場調研。'},
+  {name:'Delhi 德里',country:'印度 India',flag:'🇮🇳',lat:28.70,lng:77.10,type:'travel',desc:'印度首都，市場調研重要城市。'},
+  {name:'Jaipur 齋浦爾',country:'印度 India',flag:'🇮🇳',lat:26.92,lng:75.79,type:'travel',desc:'粉紅之城，GTM 報告田野城市。'},
+  {name:'Agra 阿格拉',country:'印度 India',flag:'🇮🇳',lat:27.18,lng:78.01,type:'travel',desc:'泰姬瑪哈陵所在地，文化田野調查。'},
+  {name:'Pushkar',country:'印度 India',flag:'🇮🇳',lat:26.49,lng:74.55,type:'travel',desc:'印度神聖湖城，文化深度體驗。'},
+  {name:'Khajuraho',country:'印度 India',flag:'🇮🇳',lat:24.85,lng:79.93,type:'travel',desc:'UNESCO 世界遺產，廟宇建築田野調查。'},
+  {name:'Varanasi 瓦拉納西',country:'印度 India',flag:'🇮🇳',lat:25.32,lng:83.00,type:'travel',desc:'恆河聖城，印度最古老城市之一，深度文化田野調查。'},
+  {name:'Mumbai 孟買',country:'印度 India',flag:'🇮🇳',lat:19.07,lng:72.87,type:'travel',desc:'印度金融中心，社會企業生態系調研。'},
+  {name:'Goa 果阿',country:'印度 India',flag:'🇮🇳',lat:15.49,lng:73.82,type:'travel',desc:'印度南部海岸，市場調研與文化觀察。'},
+  {name:'Kochi 科欽',country:'印度 India',flag:'🇮🇳',lat:9.93,lng:76.26,type:'travel',desc:'南印度港口城市，文化多元性調研。'},
+  {name:'紐約 New York',country:'美國 USA',flag:'🇺🇸',lat:40.71,lng:-74.01,type:'travel',desc:'東岸旅遊，文化觀察與社會創新機構交流。'},
+  {name:'紐哈芬 New Haven',country:'美國 USA',flag:'🇺🇸',lat:41.31,lng:-72.92,type:'travel',desc:'耶魯大學所在地，波士頓實習期間走訪。'},
+  {name:'波特蘭 Portland',country:'美國 USA',flag:'🇺🇸',lat:43.66,lng:-70.26,type:'travel',desc:'緬因州波特蘭，新英格蘭文化探索。'},
+  {name:'普羅維登斯 Providence',country:'美國 USA',flag:'🇺🇸',lat:41.82,lng:-71.42,type:'travel',desc:'羅德島首府，社會創新機構交流。'},
+  {name:'香港 Hong Kong',country:'香港 HK',flag:'🇭🇰',lat:22.32,lng:114.17,type:'travel',desc:'國際金融城市，多次中轉與文化觀察。'},
+  {name:'東京 Tokyo',country:'日本 Japan',flag:'🇯🇵',lat:35.68,lng:139.69,type:'travel',desc:'日本首都，文化與社會觀察。'},
+  {name:'大阪 Osaka',country:'日本 Japan',flag:'🇯🇵',lat:34.69,lng:135.50,type:'travel',desc:'日本第二大城，飲食文化探索。'},
+  {name:'神戶 Kobe',country:'日本 Japan',flag:'🇯🇵',lat:34.69,lng:135.19,type:'travel',desc:'日本港口城市，多元文化交融。'},
+  {name:'奈良 Nara',country:'日本 Japan',flag:'🇯🇵',lat:34.68,lng:135.83,type:'travel',desc:'日本古都，歷史文化深度體驗。'},
+  {name:'京都 Kyoto',country:'日本 Japan',flag:'🇯🇵',lat:35.01,lng:135.77,type:'travel',desc:'日本傳統文化之都，深度文化觀察。'},
+  {name:'名古屋 Nagoya',country:'日本 Japan',flag:'🇯🇵',lat:35.18,lng:136.91,type:'travel',desc:'日本中部重要城市，產業文化觀察。'},
+  {name:'首爾 Seoul',country:'韓國 Korea',flag:'🇰🇷',lat:37.57,lng:126.98,type:'travel',desc:'韓國首都，文化觀察。'},
+];
+
+window.addEventListener('load',()=>{
+  const svg=d3.select('#map-svg');
+  const w=document.getElementById('map-svg').clientWidth||900;
+  const h=window.innerWidth<=768?280:480;
+  svg.attr('viewBox',`0 0 ${w} ${h}`);
+  const proj=d3.geoNaturalEarth1().scale(w/6.2).translate([w/2,h/2]);
+  const path=d3.geoPath().projection(proj);
+  const tooltip=document.getElementById('mtt');
+  const g=svg.append('g');
+  const zoom=d3.zoom().scaleExtent([1,8]).on('zoom',e=>{
+    g.attr('transform',e.transform);
+    tooltip.style.opacity='0';
+    // 縮放時點變小：放大倍數越高，點越小
+    const k=e.transform.k;
+    g.selectAll('.city-dot')
+      .attr('r',d=>{
+        const base=d.type==='home'?7:d.type==='work'?6:4;
+        return base/Math.sqrt(k);
+      })
+      .attr('stroke-width',1.5/k);
+  });
+  svg.call(zoom);
+
+  // hint
+  const hint=document.createElement('div');
+  hint.textContent='滾輪縮放 · 拖曳平移';
+  hint.style.cssText='position:absolute;top:10px;left:14px;font-family:var(--ff-h);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);pointer-events:none;opacity:0.6;';
+  document.querySelector('.map-wrap').appendChild(hint);
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world=>{
+    g.append('g').selectAll('path').data(topojson.feature(world,world.objects.countries).features).join('path').attr('class','country').attr('d',path);
+    g.append('g').selectAll('circle').data(cities).join('circle')
+      .attr('cx',d=>proj([d.lng,d.lat])[0])
+      .attr('cy',d=>proj([d.lng,d.lat])[1])
+      .attr('r',d=>d.type==='home'?7:d.type==='work'?6:4)
+      .attr('fill',d=>d.type==='home'?'#f5f5f5':d.type==='work'?'#2dd4bf':'#888')
+      .attr('stroke',d=>d.type==='home'?'#2dd4bf':'rgba(255,255,255,0.3)')
+      .attr('stroke-width',1.5)
+      .attr('class','city-dot')
+      .style('cursor','pointer')
+      .on('mouseover',function(event,d){
+        const k=d3.zoomTransform(svg.node()).k;
+        const base=d.type==='home'?7:d.type==='work'?6:4;
+        d3.select(this).transition().duration(150).attr('r',(base+3)/Math.sqrt(k));
+        const r=document.querySelector('.map-wrap').getBoundingClientRect();
+        tooltip.style.opacity='1';
+        tooltip.style.left=(event.clientX-r.left+12)+'px';
+        tooltip.style.top=(event.clientY-r.top-20)+'px';
+        tooltip.innerHTML=`<div class="tt-flag">${d.flag}</div><div class="tt-city">${d.name}</div><div class="tt-country">${d.country}</div><div class="tt-desc">${d.desc}</div><span class="tt-badge ${d.type==='home'?'work':d.type}">${d.type==='home'?'🏠 Home':d.type==='work'?'✦ Work':'✈ Travel'}</span>`;
+      })
+      .on('mousemove',function(event){
+        const r=document.querySelector('.map-wrap').getBoundingClientRect();
+        tooltip.style.left=(event.clientX-r.left+12)+'px';
+        tooltip.style.top=(event.clientY-r.top-20)+'px';
+      })
+      .on('mouseout',function(event,d){
+        const k=d3.zoomTransform(svg.node()).k;
+        const base=d.type==='home'?7:d.type==='work'?6:4;
+        d3.select(this).transition().duration(150).attr('r',base/Math.sqrt(k));
+        tooltip.style.opacity='0';
+      });
+  });
+});
+
+function fd(type,btn){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  d3.selectAll('.city-dot').transition().duration(300)
+    .attr('r',d=>{const r=d.type==='home'?7:d.type==='work'?6:4;if(type==='all')return r;return(d.type===type||(type==='work'&&d.type==='home'))?r:0;})
+    .attr('opacity',d=>{if(type==='all')return 1;return(d.type===type||(type==='work'&&d.type==='home'))?1:0;});
+}
+
+/* TIMELINE */
+function toggleTl(el){
+  const isOpen=el.classList.contains('open');
+  document.querySelectorAll('.tl-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)el.classList.add('open');
+}
+
+/* LANG */
+function setLang(lang,btn){
+  document.querySelectorAll('.l-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.t[data-'+lang+']').forEach(el=>{el.innerHTML=el.getAttribute('data-'+lang);});
+}
+
+/* FADE */
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');});},{threshold:0.05});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
