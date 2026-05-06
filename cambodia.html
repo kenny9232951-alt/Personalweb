@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impact Hub Phnom Penh · Theo Huang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;
+  --teal:#2dd4bf;--teal-dark:#14b8a4;--teal-pale:rgba(45,212,191,0.07);
+  --white:#f5f5f5;--gray:#888;
+  --border:rgba(255,255,255,0.07);--border-t:rgba(45,212,191,0.22);
+  --ff-d:'Cormorant Garamond',Georgia,serif;
+  --ff-h:'Syne',system-ui,sans-serif;
+  --ff-b:'DM Sans',system-ui,sans-serif;
+}
+body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);
+  background-size:28px 28px;}
+body>*{position:relative;z-index:1;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--teal-dark);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 52px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);}
+.n-logo{font-family:var(--ff-h);font-size:13px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--white);text-decoration:none;}
+.n-logo em{color:var(--teal);font-style:normal;}
+.n-links{display:flex;list-style:none;}
+.n-links a{display:block;padding:0 18px;height:64px;line-height:64px;text-decoration:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:var(--ff-h);transition:color 0.2s;border-right:0.5px solid rgba(255,255,255,0.08);}
+.n-links li:first-child a{border-left:0.5px solid rgba(255,255,255,0.08);}
+.n-links a:hover{color:var(--teal);}
+.n-right{display:flex;gap:0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;}
+.l-btn{padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-right:0.5px solid rgba(255,255,255,0.1);background:transparent;cursor:pointer;color:rgba(255,255,255,0.4);font-family:var(--ff-h);transition:all 0.2s;white-space:nowrap;}
+.l-btn:last-child{border-right:none;}
+.l-btn.on{background:var(--teal);color:var(--bg);}
+.l-btn:hover:not(.on){background:rgba(45,212,191,0.1);color:var(--teal);}
+
+/* HERO */
+.proj-hero{padding-top:64px;position:relative;height:70vh;min-height:480px;overflow:hidden;display:flex;align-items:flex-end;}
+.proj-hero-bg{position:absolute;inset:0;z-index:0;}
+.proj-hero-bg img{width:100%;height:100%;object-fit:cover;opacity:0.45;display:block;}
+.proj-hero-bg-ph{width:100%;height:100%;background:linear-gradient(135deg,#041a14 0%,#0d2e25 50%,#030a08 100%);}
+.proj-hero-grad{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(10,10,10,1) 0%,rgba(10,10,10,0.5) 50%,rgba(10,10,10,0.1) 100%);}
+.proj-hero-content{position:relative;z-index:2;padding:0 52px 60px;width:100%;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-decoration:none;margin-bottom:24px;transition:color 0.2s;}
+.back-link:hover{color:var(--teal);}
+.back-link::before{content:'←';}
+.proj-domain{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.proj-domain::before{content:'';width:28px;height:1px;background:var(--teal);}
+.proj-title{font-family:var(--ff-d);font-size:clamp(36px,5vw,68px);font-weight:600;line-height:1.0;letter-spacing:-2px;color:var(--white);margin-bottom:12px;}
+.proj-subtitle{font-size:15px;color:rgba(255,255,255,0.5);max-width:560px;line-height:1.7;}
+.proj-meta-row{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
+.proj-meta-item{font-family:var(--ff-h);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.proj-meta-item span{color:var(--white);margin-left:6px;}
+
+/* BODY */
+.proj-body{max-width:1100px;margin:0 auto;padding:80px 52px;}
+.fade{opacity:0;transform:translateY(18px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.fade.vis{opacity:1;transform:none;}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:0.5px solid var(--border);margin-bottom:72px;}
+.kpi{padding:28px 24px;border-right:0.5px solid var(--border);text-align:center;}
+.kpi:last-child{border-right:none;}
+.kpi-v{font-family:var(--ff-d);font-size:36px;font-weight:600;color:var(--white);line-height:1;}
+.kpi-v em{color:var(--teal);font-style:normal;}
+.kpi-l{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-top:8px;}
+
+/* SECTION */
+.ps{margin-bottom:64px;}
+.ps-kicker{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.ps-kicker::before{content:'';width:28px;height:1px;background:var(--teal);}
+.ps-title{font-family:var(--ff-d);font-size:clamp(28px,3vw,40px);font-weight:600;line-height:1.1;letter-spacing:-1px;color:var(--white);margin-bottom:20px;}
+.ps-body{font-size:15px;color:var(--gray);line-height:1.95;max-width:720px;}
+.ps-body b{color:var(--white);font-weight:400;}
+.ps-body p+p{margin-top:16px;}
+
+/* PHOTO GRID */
+.photo-grid{display:grid;gap:4px;margin-bottom:64px;}
+.photo-grid.two{grid-template-columns:1fr 1fr;}
+.photo-grid.three{grid-template-columns:2fr 1fr 1fr;}
+.photo-grid.four{grid-template-columns:1fr 1fr;}
+.photo-grid.one{grid-template-columns:1fr;}
+.photo-grid img{width:100%;height:280px;object-fit:cover;display:block;}
+.photo-grid.one img{height:420px;}
+.photo-grid .ph{width:100%;height:280px;background:var(--bg3);display:flex;align-items:center;justify-content:center;border:0.5px dashed rgba(255,255,255,0.06);}
+.photo-grid.one .ph{height:420px;}
+.ph span{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+
+/* QUOTE */
+.proj-quote{border-left:3px solid var(--teal);padding:24px 32px;background:rgba(45,212,191,0.04);margin-bottom:64px;}
+.proj-quote p{font-family:var(--ff-d);font-size:clamp(18px,2.2vw,26px);font-weight:400;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;}
+.proj-quote cite{display:block;margin-top:14px;font-family:var(--ff-h);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-style:normal;}
+
+/* VIDEO */
+.vid-wrap{position:relative;width:100%;aspect-ratio:16/9;margin-bottom:64px;background:var(--bg3);}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+
+/* LINKS */
+.proj-links{display:flex;flex-direction:column;gap:0;border:0.5px solid var(--border);}
+.proj-link{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:0.5px solid var(--border);text-decoration:none;color:var(--gray);transition:color 0.2s,background 0.2s;}
+.proj-link:last-child{border-bottom:none;}
+.proj-link:hover{color:var(--teal);background:var(--teal-pale);}
+.pl-left{display:flex;align-items:center;gap:16px;}
+.pl-label{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);min-width:80px;}
+.pl-val{font-size:14px;}
+.pl-arr{opacity:0.3;transition:opacity 0.2s;}
+.proj-link:hover .pl-arr{opacity:1;}
+
+/* NAV BOTTOM */
+.proj-nav{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:0.5px solid var(--border);margin-top:80px;}
+.pn-btn{padding:32px 40px;text-decoration:none;color:var(--gray);transition:background 0.2s,color 0.2s;display:block;}
+.pn-btn:first-child{border-right:0.5px solid var(--border);}
+.pn-btn:hover{background:var(--teal-pale);color:var(--white);}
+.pn-dir{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.pn-title{font-family:var(--ff-d);font-size:20px;font-weight:600;}
+.pn-btn:last-child{text-align:right;}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:22px 52px;display:flex;justify-content:space-between;align-items:center;}
+.f-logo{font-family:var(--ff-h);font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+.f-logo em{color:var(--teal);font-style:normal;}
+.f-copy{font-size:11px;color:rgba(255,255,255,0.18);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .n-links{display:none;}
+  .proj-hero-content{padding:0 20px 48px;}
+  .proj-body{padding:60px 20px;}
+  .kpi-strip{grid-template-columns:1fr 1fr;}
+  .kpi:nth-child(2){border-right:none;}
+  .photo-grid.three{grid-template-columns:1fr 1fr;}
+  .photo-grid.three img:first-child{grid-column:1/-1;height:240px;}
+  footer{flex-direction:column;gap:8px;text-align:center;}
+  .proj-nav{grid-template-columns:1fr;}
+  .pn-btn:first-child{border-right:none;border-bottom:0.5px solid var(--border);}
+  .pn-btn:last-child{text-align:left;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="n-logo">T<em>H</em></a>
+  <ul class="n-links">
+    <li><a href="../index.html#about">關於我</a></li>
+    <li><a href="../journey.html">海外旅程</a></li>
+    <li><a href="../index.html#projects">專案</a></li>
+    <li><a href="../index.html#contact">聯絡我</a></li>
+  </ul>
+  <div class="n-right">
+    <button class="l-btn on" onclick="setLang('zh',this)">中文</button>
+    <button class="l-btn" onclick="setLang('en',this)">English</button>
+    <button class="l-btn" onclick="setLang('vi',this)">Tiếng Việt</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="proj-hero">
+  <div class="proj-hero-bg">
+    <img src="../images/hero-cambodia.jpg" alt="Impact Hub Phnom Penh"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+    <div class="proj-hero-bg-ph" style="display:none;"></div>
+  </div>
+  <div class="proj-hero-grad"></div>
+  <div class="proj-hero-content">
+    <a href="../index.html#projects" class="back-link t"
+      data-zh="回到專案列表" data-en="Back to Projects" data-vi="Quay lại">回到專案列表</a>
+    <div class="proj-domain t"
+      data-zh="田野調查 · 社會創新 · 實習" data-en="Fieldwork · Social Innovation · Internship" data-vi="Thực địa · Đổi mới xã hội">田野調查 · 社會創新 · 實習</div>
+    <h1 class="proj-title">Impact Hub<br>Phnom Penh</h1>
+    <p class="proj-subtitle t"
+      data-zh="沒有地圖，沒有導遊，只有一台二手摩托車和一個問題。"
+      data-en="No map, no guide — just a secondhand motorbike and one question."
+      data-vi="Không bản đồ, không hướng dẫn — chỉ có một chiếc xe máy cũ và một câu hỏi.">沒有地圖，沒有導遊，只有一台二手摩托車和一個問題。</p>
+    <div class="proj-meta-row">
+      <div class="proj-meta-item t" data-zh="🇰🇭 柬埔寨 金邊" data-en="🇰🇭 Phnom Penh, Cambodia" data-vi="🇰🇭 Phnom Penh, Campuchia">🇰🇭 柬埔寨 金邊</div>
+      <div class="proj-meta-item">Jun – Aug<span>2024</span></div>
+      <div class="proj-meta-item t" data-zh="角色：創業社群實習生" data-en="Role: Community Intern" data-vi="Vai trò: Thực tập sinh cộng đồng">角色：<span>創業社群實習生</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="proj-body">
+
+  <!-- KPI -->
+  <div class="kpi-strip fade">
+    <div class="kpi"><div class="kpi-v">3,000<em>+</em></div><div class="kpi-l t" data-zh="公里田野" data-en="km Fieldwork" data-vi="km Thực địa">公里田野</div></div>
+    <div class="kpi"><div class="kpi-v">6</div><div class="kpi-l t" data-zh="座城市" data-en="Cities" data-vi="Thành phố">座城市</div></div>
+    <div class="kpi"><div class="kpi-v">150<em>%</em></div><div class="kpi-l t" data-zh="UNDP 目標達成" data-en="UNDP Target" data-vi="Mục tiêu UNDP">UNDP 目標達成</div></div>
+    <div class="kpi"><div class="kpi-v">8</div><div class="kpi-l t" data-zh="國籍國際團隊" data-en="Nationalities" data-vi="Quốc tịch">國籍國際團隊</div></div>
+  </div>
+
+  <!-- STORY -->
+  <div class="ps fade">
+    <div class="ps-kicker t" data-zh="這一切怎麼開始的" data-en="How It Started" data-vi="Câu chuyện bắt đầu">這一切怎麼開始的</div>
+    <h2 class="ps-title t"
+      data-zh="一封 email，把我帶到了東南亞的心臟。"
+      data-en="One email brought me to the heart of Southeast Asia."
+      data-vi="Một email đã đưa tôi đến trái tim của Đông Nam Á.">一封 email，把我帶到了東南亞的心臟。</h2>
+    <div class="ps-body t"
+      data-zh="<p>大三那年，我在越南河內的青年旅館，收到了 Impact Hub 金邊的錄取通知。</p><p>當時我的越南語還不夠好，不確定自己能不能在 8 個國籍的國際團隊裡生存。但我還是上了飛機。</p><p>抵達金邊的第一週，我就騎著一台二手摩托車，穿梭在市區與郊區的邊界。我的任務是：找出柬埔寨年輕世代在創業什麼、他們遇到了什麼困難、他們需要什麼支持。</p>"
+      data-en="<p>In my junior year, I received my acceptance letter from Impact Hub Phnom Penh while staying at a hostel in Hanoi, Vietnam.</p><p>My Vietnamese wasn't great and I wasn't sure I could survive in an 8-nationality team. But I boarded the plane anyway.</p><p>In my first week in Phnom Penh, I was already on a secondhand motorbike, crossing the boundaries between the city center and rural areas. My mission: find out what young Cambodians were building, what challenges they faced, and what support they needed.</p>"
+      data-vi="<p>Năm học thứ ba, tôi nhận được thư chấp nhận từ Impact Hub Phnom Penh khi đang ở một hostel tại Hà Nội, Việt Nam.</p><p>Tiếng Việt của tôi chưa đủ tốt và tôi không chắc có thể tồn tại trong đội nhóm 8 quốc tịch. Nhưng tôi vẫn lên máy bay.</p>"><p>大三那年，我在越南河內的青年旅館，收到了 Impact Hub 金邊的錄取通知。</p><p>當時我的越南語還不夠好，不確定自己能不能在 8 個國籍的國際團隊裡生存。但我還是上了飛機。</p><p>抵達金邊的第一週，我就騎著一台二手摩托車，穿梭在市區與郊區的邊界。我的任務是：找出柬埔寨年輕世代在創業什麼、他們遇到了什麼困難、他們需要什麼支持。</p></div>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="photo-grid four fade">
+    <img src="../images/proj-cambodia.jpg" alt="柬埔寨田野"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+    <div class="ph" style="display:none"><span>proj-cambodia.jpg</span></div>
+    <div class="ph"><span>cambodia-2.jpg</span></div>
+    <div class="ph"><span>cambodia-3.jpg</span></div>
+    <div class="ph"><span>cambodia-4.jpg</span></div>
+  </div>
+
+  <!-- QUOTE -->
+  <div class="proj-quote fade">
+    <p class="t"
+      data-zh="「在金邊，我學到的不是如何把台灣模式複製到東南亞——而是學會了如何真正聽見另一個文化在說什麼。」"
+      data-en='"In Phnom Penh, I didn\'t learn how to copy Taiwan\'s model to Southeast Asia — I learned how to truly listen to what another culture is saying."'
+      data-vi='"Ở Phnom Penh, tôi không học cách sao chép mô hình Đài Loan sang Đông Nam Á — mà học được cách thực sự lắng nghe điều mà một nền văn hóa khác đang nói."'>「在金邊，我學到的不是如何把台灣模式複製到東南亞——而是學會了如何真正聽見另一個文化在說什麼。」</p>
+    <cite>Theo Huang · Phnom Penh, 2024</cite>
+  </div>
+
+  <!-- WHAT I DID -->
+  <div class="ps fade">
+    <div class="ps-kicker t" data-zh="我做了什麼" data-en="What I Did" data-vi="Tôi đã làm gì">我做了什麼</div>
+    <h2 class="ps-title t"
+      data-zh="3,000 公里的田野調查，走訪柬埔寨 6 座城市。"
+      data-en="3,000 km of fieldwork across 6 Cambodian cities."
+      data-vi="3.000 km khảo sát thực địa qua 6 thành phố Campuchia.">3,000 公里的田野調查，走訪柬埔寨 6 座城市。</h2>
+    <div class="ps-body t"
+      data-zh="<p>三個月內，我從金邊出發，騎著摩托車深入暹粒、馬德望、茶膠、貢布、施亞努市，累積超過 <b>3,000 公里</b>的田野足跡。</p><p>在 8 國籍的國際團隊中，我擔任中英柬<b>三語橋接</b>，協助舉辦 UNDP 創業工作坊，觸及目標達成 <b>150%</b>。</p><p>同時整理柬埔寨青年創業生態系報告，包含訪談 50+ 位在地創業者的質性資料，以及市場規模、融資管道、政策環境的量化分析。</p>"
+      data-en="<p>Over three months, I set out from Phnom Penh and rode a motorbike deep into Siem Reap, Battambang, Takeo, Kampot, and Sihanoukville — accumulating over <b>3,000 km</b> of fieldwork.</p><p>Within an 8-nationality international team, I served as a <b>trilingual bridge</b> (Chinese, English, Khmer), helping facilitate UNDP entrepreneurship workshops that achieved <b>150%</b> of their outreach target.</p><p>I also compiled a report on Cambodia's youth entrepreneurship ecosystem, drawing on interviews with 50+ local entrepreneurs and quantitative analysis of market size, funding channels, and policy environment.</p>"
+      data-vi="<p>Trong ba tháng, tôi xuất phát từ Phnom Penh và đi xe máy vào sâu Siem Reap, Battambang, Takeo, Kampot, và Sihanoukville — tích lũy hơn <b>3.000 km</b> thực địa.</p>"><p>三個月內，我從金邊出發，騎著摩托車深入暹粒、馬德望、茶膠、貢布、施亞努市，累積超過 <b>3,000 公里</b>的田野足跡。</p><p>在 8 國籍的國際團隊中，我擔任中英柬<b>三語橋接</b>，協助舉辦 UNDP 創業工作坊，觸及目標達成 <b>150%</b>。</p><p>同時整理柬埔寨青年創業生態系報告，包含訪談 50+ 位在地創業者的質性資料，以及市場規模、融資管道、政策環境的量化分析。</p></div>
+  </div>
+
+  <!-- MORE PHOTOS -->
+  <div class="photo-grid two fade">
+    <div class="ph"><span>cambodia-4.jpg</span></div>
+    <div class="ph"><span>cambodia-5.jpg</span></div>
+  </div>
+
+  <!-- WHAT I LEARNED -->
+  <div class="ps fade">
+    <div class="ps-kicker t" data-zh="我學到了什麼" data-en="What I Learned" data-vi="Điều tôi học được">我學到了什麼</div>
+    <h2 class="ps-title t"
+      data-zh="田野調查教我的，課堂從來教不了。"
+      data-en="What fieldwork taught me that no classroom ever could."
+      data-vi="Điều thực địa dạy tôi mà lớp học không bao giờ có thể.">田野調查教我的，課堂從來教不了。</h2>
+    <div class="ps-body t"
+      data-zh="<p>這段實習讓我真正理解了「社會創新」不是在辦公室裡設計的——它是在市場裡、在摩托車後座上、在一杯咖啡的對話中被發現的。</p><p>我也學到了跨文化溝通不只是語言問題。同一句話，在不同的文化脈絡裡，可以有完全不同的重量。劇場訓練讓我懂得觀察非語言訊號，這在田野調查裡救了我很多次。</p>"
+      data-en="<p>This internship made me truly understand that 'social innovation' isn't designed in an office — it's discovered in markets, on the back of motorcycles, and over cups of coffee.</p><p>I also learned that cross-cultural communication is more than a language issue. The same sentence can carry completely different weight in different cultural contexts. My theatre training taught me to observe non-verbal signals, which saved me many times in the field.</p>"
+      data-vi="<p>Kỳ thực tập này giúp tôi thực sự hiểu rằng 'đổi mới xã hội' không được thiết kế trong văn phòng — nó được khám phá ở chợ, trên yên xe máy, và qua những cuộc trò chuyện bên tách cà phê.</p>"><p>這段實習讓我真正理解了「社會創新」不是在辦公室裡設計的——它是在市場裡、在摩托車後座上、在一杯咖啡的對話中被發現的。</p><p>我也學到了跨文化溝通不只是語言問題。同一句話，在不同的文化脈絡裡，可以有完全不同的重量。劇場訓練讓我懂得觀察非語言訊號，這在田野調查裡救了我很多次。</p></div>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="ps fade">
+    <div class="ps-kicker t" data-zh="成果影片" data-en="Video" data-vi="Video">成果影片</div>
+    <h2 class="ps-title t"
+      data-zh="用鏡頭記錄這段旅程。"
+      data-en="Documenting the journey."
+      data-vi="Ghi lại hành trình.">用鏡頭記錄這段旅程。</h2>
+  </div>
+  <div class="vid-wrap fade">
+    <iframe src="https://www.youtube.com/embed/xAPslMZtj5U?rel=0&modestbranding=1"
+      title="柬埔寨實習成果影片" allowfullscreen></iframe>
+  </div>
+
+  <!-- LINKS -->
+  <div class="ps fade">
+    <div class="ps-kicker t" data-zh="相關連結" data-en="Related Links" data-vi="Liên kết liên quan">相關連結</div>
+    <div class="proj-links">
+      <a href="https://www.impacthub.net" target="_blank" class="proj-link">
+        <div class="pl-left"><span class="pl-label">Impact Hub</span><span class="pl-val">impacthub.net</span></div>
+        <span class="pl-arr">↗</span>
+      </a>
+      <a href="https://www.oia.ntu.edu.tw" target="_blank" class="proj-link">
+        <div class="pl-left"><span class="pl-label t" data-zh="台大報導" data-en="NTU Feature" data-vi="Bài viết NTU">台大報導</span><span class="pl-val t" data-zh="柬埔寨 Impact Hub 金邊創業社群實戰" data-en="Cambodia Impact Hub Fieldwork Feature" data-vi="Bài viết về thực địa Campuchia">柬埔寨 Impact Hub 金邊創業社群實戰</span></div>
+        <span class="pl-arr">↗</span>
+      </a>
+      <a href="https://youtu.be/xAPslMZtj5U" target="_blank" class="proj-link">
+        <div class="pl-left"><span class="pl-label">YouTube</span><span class="pl-val t" data-zh="實習成果影片" data-en="Internship Video" data-vi="Video thực tập">實習成果影片</span></div>
+        <span class="pl-arr">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="proj-nav fade">
+    <a href="seed.html" class="pn-btn">
+      <div class="pn-dir t" data-zh="← 上一個專案" data-en="← Previous" data-vi="← Trước">← 上一個專案</div>
+      <div class="pn-title t" data-zh="多元文化種子講師計畫" data-en="Multicultural Seed Program" data-vi="Chương trình Giáo viên Hạt giống">多元文化種子講師計畫</div>
+    </a>
+    <a href="india.html" class="pn-btn">
+      <div class="pn-dir t" data-zh="下一個專案 →" data-en="Next →" data-vi="Tiếp →">下一個專案 →</div>
+      <div class="pn-title t" data-zh="Impact Hub Hyderabad" data-en="Impact Hub Hyderabad" data-vi="Impact Hub Hyderabad">Impact Hub Hyderabad</div>
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="f-logo">T<em>H</em></div>
+  <div class="f-copy">© 2026 Chen-Kai (Theo) Huang · All rights reserved</div>
+</footer>
+
+<script>
+function setLang(lang,btn){
+  document.querySelectorAll('.l-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('[data-'+lang+']').forEach(el=>{
+    el.innerHTML=el.getAttribute('data-'+lang);
+  });
+}
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');});},{threshold:0.05});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
