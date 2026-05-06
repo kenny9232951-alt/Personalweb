@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多元文化種子講師計畫 · Theo Huang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#161616;--teal:#2dd4bf;--teal-dark:#14b8a4;--teal-pale:rgba(45,212,191,0.07);--white:#f5f5f5;--gray:#888;--border:rgba(255,255,255,0.07);--border-t:rgba(45,212,191,0.22);--ff-d:'Cormorant Garamond',Georgia,serif;--ff-h:'Syne',system-ui,sans-serif;--ff-b:'DM Sans',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--white);font-family:var(--ff-b);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:28px 28px;}
+body>*{position:relative;z-index:1;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--teal-dark);}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 52px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);}
+.n-logo{font-family:var(--ff-h);font-size:13px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--white);text-decoration:none;}
+.n-logo em{color:var(--teal);font-style:normal;}
+.n-links{display:flex;list-style:none;}
+.n-links a{display:block;padding:0 18px;height:64px;line-height:64px;text-decoration:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:var(--ff-h);transition:color 0.2s;border-right:0.5px solid rgba(255,255,255,0.08);}
+.n-links li:first-child a{border-left:0.5px solid rgba(255,255,255,0.08);}
+.n-links a:hover{color:var(--teal);}
+.n-right{display:flex;gap:0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;}
+.l-btn{padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-right:0.5px solid rgba(255,255,255,0.1);background:transparent;cursor:pointer;color:rgba(255,255,255,0.4);font-family:var(--ff-h);transition:all 0.2s;white-space:nowrap;}
+.l-btn:last-child{border-right:none;}
+.l-btn.on{background:var(--teal);color:var(--bg);}
+.l-btn:hover:not(.on){background:rgba(45,212,191,0.1);color:var(--teal);}
+.proj-hero{padding-top:64px;position:relative;height:70vh;min-height:480px;overflow:hidden;display:flex;align-items:flex-end;}
+.proj-hero-bg{position:absolute;inset:0;z-index:0;}
+.proj-hero-bg img{width:100%;height:100%;object-fit:cover;opacity:0.45;display:block;}
+.proj-hero-bg-ph{width:100%;height:100%;background:linear-gradient(135deg,#0a1a04 0%,#152d05 50%,#0a0a0a 100%);}
+.proj-hero-grad{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(10,10,10,1) 0%,rgba(10,10,10,0.5) 50%,rgba(10,10,10,0.1) 100%);}
+.proj-hero-content{position:relative;z-index:2;padding:0 52px 60px;width:100%;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-decoration:none;margin-bottom:24px;transition:color 0.2s;}
+.back-link:hover{color:var(--teal);}
+.back-link::before{content:'←';}
+.proj-domain{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.proj-domain::before{content:'';width:28px;height:1px;background:var(--teal);}
+.proj-title{font-family:var(--ff-d);font-size:clamp(36px,5vw,68px);font-weight:600;line-height:1.0;letter-spacing:-2px;color:var(--white);margin-bottom:12px;}
+.proj-subtitle{font-size:15px;color:rgba(255,255,255,0.5);max-width:560px;line-height:1.7;}
+.proj-meta-row{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
+.proj-meta-item{font-family:var(--ff-h);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.proj-meta-item span{color:var(--white);margin-left:6px;}
+.proj-body{max-width:1100px;margin:0 auto;padding:80px 52px;}
+.fade{opacity:0;transform:translateY(18px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.fade.vis{opacity:1;transform:none;}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:0.5px solid var(--border);margin-bottom:72px;}
+.kpi{padding:28px 24px;border-right:0.5px solid var(--border);text-align:center;}
+.kpi:last-child{border-right:none;}
+.kpi-v{font-family:var(--ff-d);font-size:36px;font-weight:600;color:var(--white);line-height:1;}
+.kpi-v em{color:var(--teal);font-style:normal;}
+.kpi-l{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-top:8px;}
+.ps{margin-bottom:64px;}
+.ps-kicker{font-family:var(--ff-h);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.ps-kicker::before{content:'';width:28px;height:1px;background:var(--teal);}
+.ps-title{font-family:var(--ff-d);font-size:clamp(28px,3vw,40px);font-weight:600;line-height:1.1;letter-spacing:-1px;color:var(--white);margin-bottom:20px;}
+.ps-body{font-size:15px;color:var(--gray);line-height:1.95;max-width:720px;}
+.ps-body b{color:var(--white);font-weight:400;}
+.ps-body p+p{margin-top:16px;}
+.photo-grid{display:grid;gap:4px;margin-bottom:64px;}
+.photo-grid.two{grid-template-columns:1fr 1fr;}
+.photo-grid.four{grid-template-columns:1fr 1fr;}
+.photo-grid img{width:100%;height:280px;object-fit:cover;display:block;}
+.photo-grid .ph{width:100%;height:280px;background:var(--bg3);display:flex;align-items:center;justify-content:center;border:0.5px dashed rgba(255,255,255,0.06);}
+.ph span{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.proj-quote{border-left:3px solid var(--teal);padding:24px 32px;background:rgba(45,212,191,0.04);margin-bottom:64px;}
+.proj-quote p{font-family:var(--ff-d);font-size:clamp(18px,2.2vw,26px);font-weight:400;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;}
+.proj-quote cite{display:block;margin-top:14px;font-family:var(--ff-h);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-style:normal;}
+.vid-wrap{position:relative;width:100%;aspect-ratio:16/9;margin-bottom:64px;background:var(--bg3);}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.proj-links{display:flex;flex-direction:column;gap:0;border:0.5px solid var(--border);}
+.proj-link{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:0.5px solid var(--border);text-decoration:none;color:var(--gray);transition:color 0.2s,background 0.2s;}
+.proj-link:last-child{border-bottom:none;}
+.proj-link:hover{color:var(--teal);background:var(--teal-pale);}
+.pl-left{display:flex;align-items:center;gap:16px;}
+.pl-label{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);min-width:80px;}
+.pl-val{font-size:14px;}
+.pl-arr{opacity:0.3;transition:opacity 0.2s;}
+.proj-link:hover .pl-arr{opacity:1;}
+.proj-nav{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:0.5px solid var(--border);margin-top:80px;}
+.pn-btn{padding:32px 40px;text-decoration:none;color:var(--gray);transition:background 0.2s,color 0.2s;display:block;}
+.pn-btn:first-child{border-right:0.5px solid var(--border);}
+.pn-btn:hover{background:var(--teal-pale);color:var(--white);}
+.pn-dir{font-family:var(--ff-h);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.pn-title{font-family:var(--ff-d);font-size:20px;font-weight:600;}
+.pn-btn:last-child{text-align:right;}
+footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:22px 52px;display:flex;justify-content:space-between;align-items:center;}
+.f-logo{font-family:var(--ff-h);font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+.f-logo em{color:var(--teal);font-style:normal;}
+.f-copy{font-size:11px;color:rgba(255,255,255,0.18);}
+@media(max-width:900px){nav{padding:0 20px;}.n-links{display:none;}.proj-hero-content{padding:0 20px 48px;}.proj-body{padding:60px 20px;}.kpi-strip{grid-template-columns:1fr 1fr;}.kpi:nth-child(2){border-right:none;}footer{flex-direction:column;gap:8px;text-align:center;}.proj-nav{grid-template-columns:1fr;}.pn-btn:first-child{border-right:none;border-bottom:0.5px solid var(--border);}.pn-btn:last-child{text-align:left;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="n-logo">T<em>H</em></a>
+  <ul class="n-links">
+    <li><a href="../index.html#about">關於我</a></li>
+    <li><a href="../journey.html">海外旅程</a></li>
+    <li><a href="../index.html#projects">專案</a></li>
+    <li><a href="../index.html#contact">聯絡我</a></li>
+  </ul>
+  <div class="n-right">
+    <button class="l-btn on" onclick="setLang('zh',this)">中文</button>
+    <button class="l-btn" onclick="setLang('en',this)">English</button>
+    <button class="l-btn" onclick="setLang('vi',this)">Tiếng Việt</button>
+  </div>
+</nav>
+
+<div class="proj-hero">
+  <div class="proj-hero-bg">
+    <img src="../images/hero-seed.jpg" alt="多元文化種子講師計畫" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+    <div class="proj-hero-bg-ph" style="display:none;"></div>
+  </div>
+  <div class="proj-hero-grad"></div>
+  <div class="proj-hero-content">
+    <a href="../index.html#projects" class="back-link">回到專案列表</a>
+    <div class="proj-domain">教育 · 專案管理 · 社會創新</div>
+    <h1 class="proj-title">多元文化種子講師計畫</h1>
+    <p class="proj-subtitle">他們用自己媽媽的語言，站在教室前面教課——感動了一千多位國小學生。</p>
+    <div class="proj-meta-row">
+      <div class="proj-meta-item">🇹🇼 台灣 全國</div>
+      <div class="proj-meta-item">Jan – Jul 2024</div>
+      <div class="proj-meta-item">角色：<span>專案經理</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="proj-body">
+  <div class="kpi-strip fade">
+    <div class="kpi"><div class="kpi-v">NT$1.2<em>M</em></div><div class="kpi-l">統籌預算</div></div>
+<div class="kpi"><div class="kpi-v">39</div><div class="kpi-l">合作學校</div></div>
+<div class="kpi"><div class="kpi-v">150<em>%</em></div><div class="kpi-l">KPI 達成</div></div>
+<div class="kpi"><div class="kpi-v">7,000<em>+</em></div><div class="kpi-l">利害關係人</div></div>
+
+  </div>
+
+  <div class="ps fade">
+    <div class="ps-kicker">這一切怎麼開始的</div>
+    <h2 class="ps-title">一個計畫，讓新二代站上了屬於自己的舞台。</h2>
+    <div class="ps-body"><p>【請填入種子講師計畫的背景——這個計畫怎麼來的？你如何接觸到這個機會？張榮發基金會的合作是如何開始的？】</p><p>【第二段：你在這個計畫中扮演的角色、遇到的挑戰，或是某個讓你印象深刻的講師或學生的故事。】</p></div>
+  </div>
+
+  <div class="photo-grid four fade">
+    <img src="../images/proj-seed.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="ph" style="display:none"><span>proj-seed.jpg</span></div>
+    <div class="ph"><span>【照片2】</span></div>
+    <div class="ph"><span>【照片3】</span></div>
+    <div class="ph"><span>【照片4】</span></div>
+  </div>
+
+  <div class="proj-quote fade">
+    <p>「【請填入一句最能代表這個計畫精神的話——可以是某位講師說過的話，或是你自己的感悟。】」</p>
+    <cite>Theo Huang · Jan – Jul 2024</cite>
+  </div>
+
+  <div class="ps fade">
+    <div class="ps-kicker">我做了什麼</div>
+    <h2 class="ps-title">統籌 120 萬預算，讓 39 所學校看見新二代的力量。</h2>
+    <div class="ps-body"><p>【請填入你具體做了什麼——計畫設計、講師招募培訓、學校協調、成果驗收等。】</p><p>【第二段：150% KPI 達成的過程、數據、或特別值得一提的成果。】</p></div>
+  </div>
+
+  <div class="ps fade">
+    <div class="ps-kicker">我學到了什麼</div>
+    <h2 class="ps-title">管理不是控制，是賦能。</h2>
+    <div class="ps-body"><p>【請填入這個專案給你最大的收穫——關於專案管理、跨組織協作、或文化教育的理解。】</p></div>
+  </div>
+
+  <div class="photo-grid two fade">
+    <div class="ph"><span>【照片5】</span></div>
+    <div class="ph"><span>【照片6】</span></div>
+  </div>
+
+  <div class="ps fade">
+    <div class="ps-kicker">相關連結</div>
+    <div class="proj-links">
+      <a href="https://www.crfound.org.tw" target="_blank" class="proj-link"><div class="pl-left"><span class="pl-label">基金會</span><span class="pl-val">張榮發基金會</span></div><span class="pl-arr">↗</span></a>
+<a href="#" target="_blank" class="proj-link"><div class="pl-left"><span class="pl-label">新聞</span><span class="pl-val">相關媒體報導</span></div><span class="pl-arr">↗</span></a>
+
+    </div>
+  </div>
+
+  <div class="proj-nav fade">
+    <a href="vpath.html" class="pn-btn">
+      <div class="pn-dir">← 上一個專案</div>
+      <div class="pn-title">VPath 越南留學生平台</div>
+    </a>
+    <a href="cambodia.html" class="pn-btn">
+      <div class="pn-dir">下一個專案 →</div>
+      <div class="pn-title">Impact Hub Phnom Penh</div>
+    </a>
+  </div>
+</div>
+
+<footer><div class="f-logo">T<em>H</em></div><div class="f-copy">© 2026 Chen-Kai (Theo) Huang · All rights reserved</div></footer>
+<script>
+function setLang(lang,btn){document.querySelectorAll('.l-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');});},{threshold:0.05});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
